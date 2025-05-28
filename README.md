@@ -317,25 +317,3 @@ For production deployment, consider:
 </details>
 
 ---
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-### Getting Started
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes**
-4. **Add tests** for new functionality
-5. **Commit your changes**
-   ```bash
-   git commit -m "Add amazing feature"
-   ```
-6. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
