@@ -12,14 +12,13 @@
   [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
   [![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com)
   [![Gemini AI](https://img.shields.io/badge/Gemini-AI-orange.svg)](https://ai.google.dev)
-  [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 </div>
 
 ---
 
 ## 🎯 Overview
 
-**AI Email Composer** is a modern web application that leverages Google's Gemini AI to generate professional emails based on natural language prompts. Simply describe what you want to say, specify the recipient, and let AI craft a polished email that gets sent instantly.
+**SMART MAIL AI** is a modern web application that leverages Google's Gemini AI to generate professional emails based on natural language prompts. Simply describe what you want to say, specify the recipient, and let AI craft a polished email that gets sent instantly.
 
 ### Why AI Email Composer?
 
