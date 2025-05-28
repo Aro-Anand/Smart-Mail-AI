@@ -1,4 +1,4 @@
-# AI Email Composer 📧✨
+# SMART MAIL AI 📧✨
 
 <div align="center">
   <h3>Generate and send professional emails powered by AI</h3>
