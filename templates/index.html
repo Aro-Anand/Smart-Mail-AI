@@ -28,7 +28,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             animation: slideUp 0.6s ease-out;
         }
 
@@ -62,6 +62,78 @@
         .header p {
             color: #666;
             font-size: 1.1rem;
+        }
+
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-form {
+            flex: 1;
+        }
+
+        .tone-selector {
+            background: #f8f9ff;
+            border: 2px solid #e1e8ff;
+            border-radius: 16px;
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .tone-selector h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .tone-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tone-option {
+            padding: 15px;
+            border: 2px solid #e1e8ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+        }
+
+        .tone-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .tone-option.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .tone-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .tone-label {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .tone-description {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
 
         .form-group {
@@ -138,6 +210,21 @@
             display: none;
         }
 
+        .btn-edit {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: none;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #333;
+            display: none;
+        }
+
         .preview-section {
             display: none;
             margin-top: 30px;
@@ -151,6 +238,18 @@
             color: #333;
             margin-bottom: 15px;
             font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .recipient-info {
+            background: #e8f2ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #2c5aa0;
         }
 
         .preview-item {
@@ -161,6 +260,9 @@
             font-weight: 600;
             color: #555;
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .preview-content {
@@ -169,6 +271,22 @@
             border-radius: 8px;
             border: 1px solid #e1e5e9;
             white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .editable {
+            border: 2px dashed #667eea;
+            background: #f8f9ff;
+        }
+
+        .edit-controls {
+            display: none;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .edit-controls.active {
+            display: flex;
         }
 
         .loading {
@@ -215,6 +333,29 @@
             display: flex;
             gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .edit-icon {
+            cursor: pointer;
+            color: #667eea;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .edit-icon:hover {
+            color: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .tone-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
         }
 
         @media (max-width: 768px) {
@@ -226,12 +367,39 @@
                 font-size: 2rem;
             }
 
+            .form-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .tone-selector {
+                order: -1;
+            }
+
+            .tone-options {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
             .button-group {
                 flex-direction: column;
             }
 
             .btn {
                 width: 100%;
+            }
+
+            .preview-section h3 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .preview-label {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
         }
     </style>
@@ -240,35 +408,73 @@
     <div class="container">
         <div class="header">
             <h1>✉️ AI Email Composer</h1>
-            <p>Generate professional emails with AI and send them instantly</p>
+            <p>Generate professional emails with AI, edit them, and send instantly</p>
         </div>
 
-        <form id="emailForm">
-            <div class="form-group">
-                <label for="prompt">Email Prompt</label>
-                <textarea 
-                    id="prompt" 
-                    class="form-control" 
-                    placeholder="Describe what you want the email to say... (e.g., 'Write a professional follow-up email to a job interview')"
-                    required
-                ></textarea>
-            </div>
+        <div class="form-container">
+            <form id="emailForm" class="main-form">
+                <div class="form-group">
+                    <label for="prompt">Email Prompt</label>
+                    <textarea 
+                        id="prompt" 
+                        class="form-control" 
+                        placeholder="Describe what you want the email to say... (e.g., 'Write a professional follow-up email to a job interview')"
+                        required
+                    ></textarea>
+                </div>
 
-            <div class="form-group">
-                <label for="receiverEmail">Receiver Email</label>
-                <input 
-                    type="email" 
-                    id="receiverEmail" 
-                    class="form-control" 
-                    placeholder="recipient@example.com"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="receiverEmail">Receiver Email</label>
+                    <input 
+                        type="email" 
+                        id="receiverEmail" 
+                        class="form-control" 
+                        placeholder="recipient@example.com"
+                        required
+                    />
+                </div>
 
-            <button type="submit" class="btn btn-generate" id="generateBtn">
-                🤖 Generate Email
-            </button>
-        </form>
+                <button type="submit" class="btn btn-generate" id="generateBtn">
+                    🤖 Generate Email
+                </button>
+            </form>
+
+            <div class="tone-selector">
+                <h3>🎭 Email Tone</h3>
+                <div class="tone-options">
+                    <div class="tone-option active" data-tone="professional">
+                        <div class="tone-icon">💼</div>
+                        <div class="tone-label">Professional</div>
+                        <div class="tone-description">Formal and business-appropriate</div>
+                    </div>
+                    <div class="tone-option" data-tone="friendly">
+                        <div class="tone-icon">😊</div>
+                        <div class="tone-label">Friendly</div>
+                        <div class="tone-description">Warm and approachable</div>
+                    </div>
+                    <div class="tone-option" data-tone="formal">
+                        <div class="tone-icon">🎩</div>
+                        <div class="tone-label">Formal</div>
+                        <div class="tone-description">Very formal and ceremonious</div>
+                    </div>
+                    <div class="tone-option" data-tone="casual">
+                        <div class="tone-icon">👋</div>
+                        <div class="tone-label">Casual</div>
+                        <div class="tone-description">Relaxed and informal</div>
+                    </div>
+                    <div class="tone-option" data-tone="persuasive">
+                        <div class="tone-icon">🎯</div>
+                        <div class="tone-label">Persuasive</div>
+                        <div class="tone-description">Compelling and convincing</div>
+                    </div>
+                    <div class="tone-option" data-tone="apologetic">
+                        <div class="tone-icon">🙏</div>
+                        <div class="tone-label">Apologetic</div>
+                        <div class="tone-description">Expressing regret or apology</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -279,21 +485,44 @@
         <div class="alert alert-error" id="errorAlert"></div>
 
         <div class="preview-section" id="previewSection">
-            <h3>📧 Generated Email Preview</h3>
+            <h3>
+                📧 Generated Email Preview
+                <span class="tone-indicator" id="toneIndicator">Professional</span>
+            </h3>
             
+            <div class="recipient-info" id="recipientInfo" style="display: none;">
+                <strong>Recipient:</strong> <span id="recipientName"></span>
+            </div>
+
             <div class="preview-item">
-                <div class="preview-label">To:</div>
+                <div class="preview-label">
+                    To:
+                </div>
                 <div class="preview-content" id="previewTo"></div>
             </div>
 
             <div class="preview-item">
-                <div class="preview-label">Subject:</div>
-                <div class="preview-content" id="previewSubject"></div>
+                <div class="preview-label">
+                    Subject:
+                    <span class="edit-icon" onclick="toggleEdit('subject')" title="Edit subject">✏️</span>
+                </div>
+                <div class="preview-content" id="previewSubject" contenteditable="false"></div>
+                <div class="edit-controls" id="subjectControls">
+                    <button type="button" class="btn btn-save" onclick="saveEdit('subject')">💾 Save</button>
+                    <button type="button" class="btn btn-cancel" onclick="cancelEdit('subject')">❌ Cancel</button>
+                </div>
             </div>
 
             <div class="preview-item">
-                <div class="preview-label">Message:</div>
-                <div class="preview-content" id="previewBody"></div>
+                <div class="preview-label">
+                    Message:
+                    <span class="edit-icon" onclick="toggleEdit('body')" title="Edit message">✏️</span>
+                </div>
+                <div class="preview-content" id="previewBody" contenteditable="false"></div>
+                <div class="edit-controls" id="bodyControls">
+                    <button type="button" class="btn btn-save" onclick="saveEdit('body')">💾 Save</button>
+                    <button type="button" class="btn btn-cancel" onclick="cancelEdit('body')">❌ Cancel</button>
+                </div>
             </div>
 
             <div class="button-group">
@@ -309,6 +538,26 @@
 
     <script>
         let generatedEmail = null;
+        let originalContent = {};
+        let selectedTone = 'professional';
+
+        // Tone selection handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const toneOptions = document.querySelectorAll('.tone-option');
+            
+            toneOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    toneOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Update selected tone
+                    selectedTone = this.dataset.tone;
+                });
+            });
+        });
 
         document.getElementById('emailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -343,7 +592,8 @@
                     },
                     body: JSON.stringify({
                         prompt: prompt,
-                        receiver_email: receiverEmail
+                        receiver_email: receiverEmail,
+                        tone: selectedTone
                     })
                 });
 
@@ -368,6 +618,10 @@
                 showAlert('No email to send', 'error');
                 return;
             }
+
+            // Update generatedEmail with current content
+            generatedEmail.subject = document.getElementById('previewSubject').textContent;
+            generatedEmail.body = document.getElementById('previewBody').textContent;
 
             showLoading(true);
             hideAlerts();
@@ -400,8 +654,66 @@
             document.getElementById('previewSubject').textContent = data.subject;
             document.getElementById('previewBody').textContent = data.body;
             
+            // Display recipient name if available
+            if (data.recipient_name) {
+                document.getElementById('recipientName').textContent = data.recipient_name;
+                document.getElementById('recipientInfo').style.display = 'block';
+            } else {
+                document.getElementById('recipientInfo').style.display = 'none';
+            }
+
+            // Display tone indicator
+            const toneIndicator = document.getElementById('toneIndicator');
+            toneIndicator.textContent = (data.tone || 'professional').charAt(0).toUpperCase() + (data.tone || 'professional').slice(1);
+            
             document.getElementById('previewSection').style.display = 'block';
             document.getElementById('sendBtn').style.display = 'inline-block';
+
+            // Store original content for cancel functionality
+            originalContent = {
+                subject: data.subject,
+                body: data.body
+            };
+        }
+
+        function toggleEdit(field) {
+            const element = document.getElementById(`preview${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            const controls = document.getElementById(`${field}Controls`);
+            
+            if (element.contentEditable === 'false') {
+                // Start editing
+                element.contentEditable = 'true';
+                element.classList.add('editable');
+                element.focus();
+                controls.classList.add('active');
+                
+                // Store original content
+                originalContent[field] = element.textContent;
+            } else {
+                // Stop editing without saving
+                cancelEdit(field);
+            }
+        }
+
+        function saveEdit(field) {
+            const element = document.getElementById(`preview${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            const controls = document.getElementById(`${field}Controls`);
+            
+            element.contentEditable = 'false';
+            element.classList.remove('editable');
+            controls.classList.remove('active');
+            
+            showAlert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`, 'success');
+        }
+
+        function cancelEdit(field) {
+            const element = document.getElementById(`preview${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            const controls = document.getElementById(`${field}Controls`);
+            
+            element.textContent = originalContent[field];
+            element.contentEditable = 'false';
+            element.classList.remove('editable');
+            controls.classList.remove('active');
         }
 
         function showLoading(show) {
@@ -425,6 +737,23 @@
             document.getElementById('successAlert').style.display = 'none';
             document.getElementById('errorAlert').style.display = 'none';
         }
+
+        // Handle Enter key in editable fields
+        document.addEventListener('keydown', function(e) {
+            if (e.target.contentEditable === 'true') {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    // Ctrl+Enter to save
+                    e.preventDefault();
+                    const field = e.target.id.replace('preview', '').toLowerCase();
+                    saveEdit(field);
+                } else if (e.key === 'Escape') {
+                    // Escape to cancel
+                    e.preventDefault();
+                    const field = e.target.id.replace('preview', '').toLowerCase();
+                    cancelEdit(field);
+                }
+            }
+        });
     </script>
 </body>
 </html>
