@@ -1,13 +1,17 @@
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import google.generativeai as genai
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 import os
 import json
 import re
 from dotenv import load_dotenv
+from prompts import DEFAULT_EMAIL_AGENT_PROMPT
 
 # Load environment variables
 load_dotenv()
@@ -15,104 +19,53 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Configure Gemini API with optimal temperature for email drafting
+# Configure Gemini API
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel(
     'gemini-1.5-flash',
     generation_config=genai.types.GenerationConfig(
-        temperature=0.3,  # Lower temperature for more consistent, professional emails
+        temperature=0.3,
         top_p=0.8,
         top_k=40,
         max_output_tokens=1024,
     )
 )
 
-# Email configuration
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SENDER_EMAIL = os.getenv('SENDER_EMAIL')
-SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')  # Use App Password for Gmail
-
-# Integrated email prompts
-DEFAULT_EMAIL_AGENT_PROMPT = """
-You are an intelligent email drafting assistant. Your role is to:
-
-1. Analyze user requests and extract key information
-2. Draft professional, contextually appropriate emails
-3. Maintain proper email etiquette and formatting
-4. Adapt tone based on the recipient and purpose
-
-Guidelines:
-- Always include appropriate subject lines
-- Use professional but friendly tone for business emails
-- Be concise yet comprehensive
-- Include proper greetings and closings
-- Format content with proper paragraphs and structure
-
-When drafting emails:
-- Subject: Create a clear, specific subject line
-- Greeting: Use appropriate salutation based on context and recipient name
-- Body: Structure content logically with clear paragraphs
-- Closing: End with professional sign-off
-- Signature: Include sender information if provided
-
-Always respond with email content in this JSON format:
-{
-    "subject": "Email subject here",
-    "body": "Email body content here",
-    "tone": "professional/casual/formal"
-}
-"""
+SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
 
 def extract_name_from_email(email):
-    """Extract a likely name from an email address"""
     if not email or '@' not in email:
         return None
-    
-    # Get the part before @
     username = email.split('@')[0]
-    
-    # Common patterns to extract names
-    # Remove numbers and common separators
     name_part = re.sub(r'[0-9]+', '', username)
     name_part = re.sub(r'[._-]', ' ', name_part)
-    
-    # Split and capitalize each part
     name_parts = name_part.split()
     if name_parts:
-        # Capitalize each part and join
-        formatted_name = ' '.join(word.capitalize() for word in name_parts if word)
-        return formatted_name if formatted_name else None
-    
+        return ' '.join(word.capitalize() for word in name_parts if word)
     return None
 
 def get_email_prompt(user_request, recipient_email, recipient_name=None, tone="professional"):
-    """Generate enhanced email prompt with recipient context and tone"""
-    name_context = ""
-    if recipient_name:
-        name_context = f"\nRecipient Name: {recipient_name}"
-    
+    name_context = f"\nRecipient Name: {recipient_name}" if recipient_name else ""
     tone_guidance = {
-        "professional": "Use a professional, business-appropriate tone. Be courteous and respectful.",
-        "friendly": "Use a warm, friendly tone while maintaining professionalism. Be approachable and personable.",
-        "formal": "Use a very formal, ceremonious tone. Be extremely respectful and traditional in language.",
-        "casual": "Use a relaxed, informal tone. Be conversational but still appropriate.",
-        "persuasive": "Use a compelling, convincing tone. Be confident and persuasive in your approach.",
-        "apologetic": "Use an apologetic, regretful tone. Express sincere apologies and take responsibility."
+        "professional": "Use a professional, business-appropriate tone.",
+        "friendly": "Use a warm, friendly tone.",
+        "formal": "Use a very formal, ceremonious tone.",
+        "casual": "Use a relaxed, informal tone.",
+        "persuasive": "Use a compelling, convincing tone.",
+        "apologetic": "Use an apologetic, regretful tone."
     }
-    
     tone_instruction = tone_guidance.get(tone, tone_guidance["professional"])
-    
     return f"""
     {DEFAULT_EMAIL_AGENT_PROMPT}
-    
+
     User Request: {user_request}
     Recipient Email: {recipient_email}{name_context}
     Tone: {tone.capitalize()} - {tone_instruction}
-    
-    Please draft an appropriate email based on this request with the specified tone. If a recipient name is provided, use it in the greeting. Otherwise, use a generic professional greeting that matches the requested tone.
-    
-    Ensure the email tone is consistently {tone} throughout the subject line and body.
+
+    Please draft an appropriate email with consistent tone.
     """
 
 @app.route('/')
@@ -125,23 +78,17 @@ def generate_email():
         data = request.get_json()
         prompt = data.get('prompt')
         receiver_email = data.get('receiver_email')
-        tone = data.get('tone', 'professional')  # Default to professional tone
-        
+        tone = data.get('tone', 'professional')
+
         if not prompt or not receiver_email:
             return jsonify({'error': 'Prompt and receiver email are required'}), 400
-        
-        # Extract name from email
+
         recipient_name = extract_name_from_email(receiver_email)
-        
-        # Generate email content using enhanced prompt
         enhanced_prompt = get_email_prompt(prompt, receiver_email, recipient_name, tone)
-        
         response = model.generate_content(enhanced_prompt)
         generated_content = response.text
-        
-        # Try to parse JSON response first
+
         try:
-            # Look for JSON in the response
             json_match = re.search(r'\{.*\}', generated_content, re.DOTALL)
             if json_match:
                 email_data = json.loads(json_match.group())
@@ -151,24 +98,20 @@ def generate_email():
             else:
                 raise ValueError("No JSON found")
         except (json.JSONDecodeError, ValueError):
-            # Fallback to text parsing
             lines = generated_content.split('\n')
             subject = ""
             body = ""
-            
             for i, line in enumerate(lines):
                 if line.startswith('Subject:'):
                     subject = line.replace('Subject:', '').strip()
                 elif line.startswith('Body:'):
                     body = '\n'.join(lines[i+1:]).strip()
                     break
-            
             if not subject:
                 subject = "Generated Email"
             if not body:
                 body = generated_content
-            tone = tone  # Use the requested tone
-        
+
         return jsonify({
             'subject': subject,
             'body': body,
@@ -176,42 +119,56 @@ def generate_email():
             'recipient_name': recipient_name,
             'tone': tone
         })
-        
+
     except Exception as e:
         return jsonify({'error': f'Error generating email: {str(e)}'}), 500
 
 @app.route('/send-email', methods=['POST'])
 def send_email():
     try:
-        data = request.get_json()
-        subject = data.get('subject')
-        body = data.get('body')
-        receiver_email = data.get('receiver_email')
-        
-        if not all([subject, body, receiver_email]):
-            return jsonify({'error': 'Subject, body, and receiver email are required'}), 400
-        
-        # Create message
-        msg = MIMEMultipart()
-        msg['From'] = SENDER_EMAIL
-        msg['To'] = receiver_email
-        msg['Subject'] = subject
-        
-        # Add body to email
-        msg.attach(MIMEText(body, 'plain'))
-        
-        # Create SMTP session
+        subject = request.form.get('subject')
+        body = request.form.get('body')
+        receiver_emails = request.form.get('receiver_emails', '')
+
+        if not all([subject, body, receiver_emails]):
+            return jsonify({'error': 'Subject, body, and receiver email(s) are required'}), 400
+
+        attachments = []
+        files = request.files.getlist('attachments')
+        for file in files:
+            if file.filename:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(file.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename="{file.filename}"')
+                attachments.append(part)
+
+        recipient_list = [email.strip() for email in receiver_emails.split(',') if email.strip()]
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()  # Enable TLS encryption
+        server.starttls()
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        
-        # Send email
-        text = msg.as_string()
-        server.sendmail(SENDER_EMAIL, receiver_email, text)
+
+        for recipient in recipient_list:
+            name = extract_name_from_email(recipient)
+            lines = body.strip().split('\n')
+            if lines and re.match(r'^\s*(Hi|Hello|Dear)\s', lines[0], re.IGNORECASE):
+                lines[0] = f"Hi {name},"
+            personalized_body = '\n'.join(lines)
+
+            msg = MIMEMultipart()
+            msg['From'] = SENDER_EMAIL
+            msg['To'] = recipient
+            msg['Subject'] = subject
+            msg.attach(MIMEText(personalized_body, 'plain'))
+
+            for part in attachments:
+                msg.attach(part)
+
+            server.sendmail(SENDER_EMAIL, recipient, msg.as_string())
+
         server.quit()
-        
-        return jsonify({'message': 'Email sent successfully!'})
-        
+        return jsonify({'message': 'Emails sent individually to each recipient!'})
+
     except Exception as e:
         return jsonify({'error': f'Error sending email: {str(e)}'}), 500
 

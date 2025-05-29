@@ -18,7 +18,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
@@ -26,9 +26,9 @@
             backdrop-filter: blur(10px);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
+            padding: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             animation: slideUp 0.6s ease-out;
         }
 
@@ -45,12 +45,12 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
             color: #333;
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 10px;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -61,49 +61,84 @@
 
         .header p {
             color: #666;
-            font-size: 1.1rem;
-        }
-
-        .form-container {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-bottom: 30px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            padding: 0 10px;
         }
 
         .main-form {
-            flex: 1;
+            width: 100%;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        /* Tone Selector - Now horizontal below receiver email */
         .tone-selector {
             background: #f8f9ff;
             border: 2px solid #e1e8ff;
             border-radius: 16px;
-            padding: 25px;
-            height: fit-content;
+            padding: 20px;
+            margin-bottom: 25px;
         }
 
         .tone-selector h3 {
             color: #333;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             text-align: center;
         }
 
         .tone-options {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px;
         }
 
         .tone-option {
-            padding: 15px;
+            padding: 12px 8px;
             border: 2px solid #e1e8ff;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: white;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 80px;
+            justify-content: center;
         }
 
         .tone-option:hover {
@@ -121,68 +156,35 @@
         }
 
         .tone-icon {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 6px;
         }
 
         .tone-label {
             font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 4px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            margin-bottom: 3px;
         }
 
         .tone-description {
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
             opacity: 0.8;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            transform: translateY(-2px);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
+            line-height: 1.2;
         }
 
         .btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 24px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            min-height: 48px;
         }
 
         .btn:hover {
@@ -228,7 +230,7 @@
         .preview-section {
             display: none;
             margin-top: 30px;
-            padding: 25px;
+            padding: 20px;
             background: #f8f9fa;
             border-radius: 12px;
             border-left: 4px solid #667eea;
@@ -237,10 +239,12 @@
         .preview-section h3 {
             color: #333;
             margin-bottom: 15px;
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .recipient-info {
@@ -248,7 +252,7 @@
             padding: 10px 15px;
             border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             color: #2c5aa0;
         }
 
@@ -259,10 +263,13 @@
         .preview-label {
             font-weight: 600;
             color: #555;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
         .preview-content {
@@ -272,6 +279,8 @@
             border: 1px solid #e1e5e9;
             white-space: pre-wrap;
             line-height: 1.6;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            word-break: break-word;
         }
 
         .editable {
@@ -283,6 +292,7 @@
             display: none;
             margin-top: 10px;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .edit-controls.active {
@@ -315,6 +325,7 @@
             border-radius: 8px;
             margin: 15px 0;
             display: none;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
         }
 
         .alert-success {
@@ -339,7 +350,7 @@
         .edit-icon {
             cursor: pointer;
             color: #667eea;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             transition: all 0.3s ease;
         }
 
@@ -354,32 +365,44 @@
             background: #667eea;
             color: white;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
             margin-left: 10px;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .container {
-                padding: 30px 20px;
+                padding: 20px 15px;
+                border-radius: 15px;
             }
 
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .form-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .tone-selector {
-                order: -1;
+            .header {
+                margin-bottom: 25px;
             }
 
             .tone-options {
-                display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+            }
+
+            .tone-option {
+                padding: 10px 6px;
+                min-height: 70px;
+            }
+
+            .preview-section h3 {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .preview-label {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .button-group {
@@ -390,16 +413,84 @@
                 width: 100%;
             }
 
-            .preview-section h3 {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+            .edit-controls {
+                justify-content: center;
             }
 
-            .preview-label {
+            .tone-indicator {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px 10px;
+            }
+
+            .tone-options {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .tone-option {
+                padding: 12px;
+                min-height: 60px;
+                flex-direction: row;
+                justify-content: flex-start;
+                text-align: left;
+                gap: 12px;
+            }
+
+            .tone-icon {
+                margin-bottom: 0;
+                font-size: 1.3rem;
+            }
+
+            .tone-details {
+                display: flex;
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+            }
+
+            textarea.form-control {
+                min-height: 80px;
+            }
+        }
+
+        /* Large screens optimization */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 40px;
+            }
+
+            .tone-options {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .preview-section {
+                padding: 30px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 320px) {
+            .container {
+                margin: 5px;
+                padding: 12px 8px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                padding: 8px 10px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -411,70 +502,92 @@
             <p>Generate professional emails with AI, edit them, and send instantly</p>
         </div>
 
-        <div class="form-container">
-            <form id="emailForm" class="main-form">
-                <div class="form-group">
-                    <label for="prompt">Email Prompt</label>
-                    <textarea 
-                        id="prompt" 
-                        class="form-control" 
-                        placeholder="Describe what you want the email to say... (e.g., 'Write a professional follow-up email to a job interview')"
-                        required
-                    ></textarea>
-                </div>
+        <form id="emailForm" class="main-form">
+            <div class="form-group">
+                <label for="prompt">Email Prompt</label>
+                <textarea 
+                    id="prompt" 
+                    class="form-control" 
+                    placeholder="Describe what you want the email to say... (e.g., 'Write a professional follow-up email to a job interview')"
+                    required
+                ></textarea>
+            </div>
 
-                <div class="form-group">
-                    <label for="receiverEmail">Receiver Email</label>
-                    <input 
-                        type="email" 
-                        id="receiverEmail" 
-                        class="form-control" 
-                        placeholder="recipient@example.com"
-                        required
-                    />
-                </div>
+            <div class="form-group">
+                <label for="receiverEmail">Receiver Email</label>
+                <input 
+                    type="text" 
+                    id="receiverEmail" 
+                    class="form-control" 
+                    placeholder="e.g., user@example.com"
+                    required
+                />
+            </div>
 
-                <button type="submit" class="btn btn-generate" id="generateBtn">
-                    🤖 Generate Email
-                </button>
-            </form>
+            <div class="form-group">
+                <label for="attachments">Attachments (optional)</label>
+                <input 
+                    type="file" 
+                    id="attachments" 
+                    class="form-control" 
+                    multiple
+                />
+            </div>
 
+
+            <!-- Tone Selector moved here - horizontally arranged -->
             <div class="tone-selector">
                 <h3>🎭 Email Tone</h3>
                 <div class="tone-options">
                     <div class="tone-option active" data-tone="professional">
                         <div class="tone-icon">💼</div>
-                        <div class="tone-label">Professional</div>
-                        <div class="tone-description">Formal and business-appropriate</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Professional</div>
+                            <div class="tone-description">Formal and business-appropriate</div>
+                        </div>
                     </div>
                     <div class="tone-option" data-tone="friendly">
                         <div class="tone-icon">😊</div>
-                        <div class="tone-label">Friendly</div>
-                        <div class="tone-description">Warm and approachable</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Friendly</div>
+                            <div class="tone-description">Warm and approachable</div>
+                        </div>
                     </div>
                     <div class="tone-option" data-tone="formal">
                         <div class="tone-icon">🎩</div>
-                        <div class="tone-label">Formal</div>
-                        <div class="tone-description">Very formal and ceremonious</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Formal</div>
+                            <div class="tone-description">Very formal and ceremonious</div>
+                        </div>
                     </div>
                     <div class="tone-option" data-tone="casual">
                         <div class="tone-icon">👋</div>
-                        <div class="tone-label">Casual</div>
-                        <div class="tone-description">Relaxed and informal</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Casual</div>
+                            <div class="tone-description">Relaxed and informal</div>
+                        </div>
                     </div>
                     <div class="tone-option" data-tone="persuasive">
                         <div class="tone-icon">🎯</div>
-                        <div class="tone-label">Persuasive</div>
-                        <div class="tone-description">Compelling and convincing</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Persuasive</div>
+                            <div class="tone-description">Compelling and convincing</div>
+                        </div>
                     </div>
                     <div class="tone-option" data-tone="apologetic">
                         <div class="tone-icon">🙏</div>
-                        <div class="tone-label">Apologetic</div>
-                        <div class="tone-description">Expressing regret or apology</div>
+                        <div class="tone-details">
+                            <div class="tone-label">Apologetic</div>
+                            <div class="tone-description">Expressing regret or apology</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <button type="submit" class="btn btn-generate" id="generateBtn">
+                🤖 Generate Email
+            </button>
+        </form>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -618,25 +731,27 @@
                 showAlert('No email to send', 'error');
                 return;
             }
+    const formData = new FormData();
+    formData.append('subject', document.getElementById('previewSubject').textContent);
+    formData.append('body', document.getElementById('previewBody').textContent);
+    formData.append('receiver_emails', generatedEmail.receiver_email);
 
-            // Update generatedEmail with current content
-            generatedEmail.subject = document.getElementById('previewSubject').textContent;
-            generatedEmail.body = document.getElementById('previewBody').textContent;
-
+            const files = document.getElementById('attachments').files;
+            for (let i = 0; i < files.length; i++) {
+                formData.append('attachments', files[i]);
+            }
+        
             showLoading(true);
             hideAlerts();
-
+        
             try {
                 const response = await fetch('/send-email', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(generatedEmail)
+                    body: formData
                 });
-
+            
                 const data = await response.json();
-
+            
                 if (response.ok) {
                     showAlert('Email sent successfully! 🎉', 'success');
                 } else {
@@ -648,7 +763,6 @@
                 showLoading(false);
             }
         }
-
         function displayPreview(data) {
             document.getElementById('previewTo').textContent = data.receiver_email;
             document.getElementById('previewSubject').textContent = data.subject;
